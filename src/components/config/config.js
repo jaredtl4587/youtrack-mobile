@@ -19,8 +19,9 @@ export function getDefaultConfig(): AppConfig {
       clientId: null,
       clientSecret: null,
       youtrackServiceId: null,
+      sessionCookie: null,
       scopes: `Hub YouTrack`,
-      landingUrl: 'ytoauth://landing.url'
+      landingUrl: 'ytoauth://landing.url',
     }
   };
 }

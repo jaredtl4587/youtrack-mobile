@@ -1,4 +1,5 @@
-/* eslint-disable */
+/* @flow */
+import type {IssueOnList} from './Issue';
 
 export type SprintInformation = {
   id: string,

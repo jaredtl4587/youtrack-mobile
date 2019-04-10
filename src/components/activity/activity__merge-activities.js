@@ -1,6 +1,8 @@
 /* @flow */
 import type {IssueActivity} from '../../flow/Activity';
 
+type WithID = {id: string};
+
 export const mergeActivities = (activities: Array<IssueActivity>) => {
   if (!activities || activities.length < 2) {
     return activities;
@@ -48,6 +50,7 @@ export const mergeActivities = (activities: Array<IssueActivity>) => {
 
       return (
         (bothNotNull && bothComplex) ?
+          // $FlowFixMe
           mergedActivity.added.id !== mergedActivity.removed.id :
           true
       );
@@ -57,9 +60,12 @@ export const mergeActivities = (activities: Array<IssueActivity>) => {
 
   function update(mergedActivity: IssueActivity, activity: IssueActivity) {
     if (isMultiple(mergedActivity)) {
-      const addedRemoved = disjoint(mergedActivity.added, activity.removed);
-      const removedAdded = disjoint(mergedActivity.removed, activity.added);
+      // $FlowFixMe
+      const addedRemoved = disjoint(mergedActivity.added, activity.removed || []);
+      // $FlowFixMe
+      const removedAdded = disjoint(mergedActivity.removed || [], activity.added);
       mergedActivity.added = merge(addedRemoved[0], removedAdded[1]);
+      // $FlowFixMe
       mergedActivity.removed = merge(addedRemoved[1], removedAdded[0]);
     } else {
       mergedActivity.added = activity.added;
@@ -87,7 +93,7 @@ export const mergeActivities = (activities: Array<IssueActivity>) => {
   }
 
 
-  function merge(A, B) {
+  function merge(A: Array<WithID>, B: Array<WithID>) {
     if (!A || !B) {
       return A || B;
     }
@@ -95,13 +101,13 @@ export const mergeActivities = (activities: Array<IssueActivity>) => {
   }
 
 
-  function removeDuplicates(A) {
+  function removeDuplicates(A: Array<WithID>) {
     const idsMap = {};
     return A.filter((it) => (idsMap[it.id]) ? false : idsMap[it.id] = true);
   }
 
 
-  function disjoint(A, B) {
+  function disjoint(A: Array<WithID>, B: Array<WithID>) {
     if (!A || !B) {
       return [A, B];
     }
@@ -114,7 +120,7 @@ export const mergeActivities = (activities: Array<IssueActivity>) => {
     return [A, B];
   }
 
-  function arrayToMap(items) {
+  function arrayToMap(items: Array<WithID>) {
     return items.reduce((map, item) => {
       map[item.id] = item;
       return map;

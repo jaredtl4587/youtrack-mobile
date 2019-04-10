@@ -48,7 +48,8 @@ describe('Config', () => {
           landingUrl: 'ytoauth://landing.url',
           scopes: 'Hub YouTrack',
           serverUri: 'http://hub.com',
-          youtrackServiceId: 'fake-service-id'
+          youtrackServiceId: 'fake-service-id',
+          sessionCookie: null
         },
         backendUrl: 'http://fake.backend',
         statisticsEnabled: true,

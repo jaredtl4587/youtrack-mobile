@@ -21,6 +21,10 @@ type Props = {
 
 function getEstimation(estimationField: {id: string}, fields: Array<CustomFieldShort>) {
   const field = fields.filter(field => field.projectCustomField.field.id === estimationField.id)[0];
+  if (field && typeof field.value === 'number') {
+    return field.value;
+  }
+  // $FlowFixMe
   return field?.value?.presentation || 'Not estimated';
 }
 
@@ -46,9 +50,9 @@ export default class AgileCard extends PureComponent<Props, void> {
       </Text>;
 
     const assigneeField = getAssigneeField(issue);
-    const assignees = []
+    const assignees = (([]
       .concat(assigneeField ? assigneeField.value : null)
-      .filter(item => item);
+      .filter(item => item): any): Array<FieldValueShort>);
 
     return (
       <View style={[
@@ -69,7 +73,7 @@ export default class AgileCard extends PureComponent<Props, void> {
           {issue.summary}
         </Text>
         <View style={styles.assignees}>
-          {assignees.map((assignee: FieldValueShort) => {
+          {assignees.map(assignee => {
             return (
               <Avatar
                 key={assignee.id}

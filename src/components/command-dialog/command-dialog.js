@@ -130,7 +130,7 @@ export default class CommandDialog extends Component<Props, State> {
         {suggestions.commands.map((command: SuggestedCommand, index: number) => (
           <View key={command.description}>
             <Text style={[styles.commandDescription, command.error && styles.commandDescriptionError]}>
-              {index + 1}: {ApiHelper.stripHtml(command.description)}
+              {index + 1}: {ApiHelper.stripHtml(command.description || '')}
             </Text>
           </View>
         ))}

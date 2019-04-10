@@ -23,21 +23,21 @@ export default class CustomField extends Component<Props, void> {
     return field.projectCustomField.field.fieldType.valueType;
   }
 
-  _getValue(value: FieldValue, fieldType: ?string): string {
+  _getValue(value: ?FieldValue | number, fieldType: ?string): string {
     const field: CustomFieldType = this.props.field;
-    const emptyValue = field.projectCustomField.emptyFieldText;
+    const emptyValue = field.projectCustomField.emptyFieldText || 'Empty';
 
     if (value) {
-      if (fieldType === 'date') {
+      if (fieldType === 'date' && typeof value === 'number') {
         return new Date(value).toLocaleDateString();
       }
-      if (fieldType === 'date and time') {
+      if (fieldType === 'date and time' && typeof value === 'number') {
         const date = new Date(value).toLocaleDateString();
         const time = new Date(value).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         return `${date} ${time}`;
       }
       if (fieldType === 'integer' || fieldType === 'string' || fieldType === 'float') {
-        return value;
+        return (value || '').toString();
       }
       return getEntityPresentation(value);
     }
@@ -50,13 +50,16 @@ export default class CustomField extends Component<Props, void> {
     return field.projectCustomField.field.name;
   }
 
-  _renderColorMaker(value) {
+  _renderColorMaker(value: FieldValue | number) {
+    if (typeof value === 'number') {
+      return;
+    }
     const values = [].concat(value);
     if (!values || !values.length) {
       return;
     }
 
-    const renderSingleMarker = (val) => {
+    const renderSingleMarker = (val: FieldValue) => {
       if (!val || !val.color) {
         return;
       }

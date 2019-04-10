@@ -66,7 +66,7 @@ export default class BaseAPI {
     this.youTrackIssueUrl = `${this.youTrackApiUrl}/issues`;
   }
 
-  async makeAuthorizedRequest(url: string, method: ?string, body: ?Object, options: RequestOptions = defaultRequestOptions) {
+  async makeAuthorizedRequest<T>(url: string, method: ?string, body: ?Object, options: RequestOptions = defaultRequestOptions): Promise<T> {
     url = patchTopParam(url);
     log.debug(`Making ${method || 'GET'} request to ${url}${body ? ` with body |${JSON.stringify(body)}|` : ''}`);
     assertLongQuery(url);
@@ -99,6 +99,6 @@ export default class BaseAPI {
     if (!options.parseJson) {
       return res;
     }
-    return await res.json();
+    return await res.json<T>();
   }
 }

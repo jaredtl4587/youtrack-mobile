@@ -38,7 +38,7 @@ export default class QueryAssistSuggestionsList extends Component<Props, State> 
     this._prepareDataSource(newProps.suggestions);
   }
 
-  _prepareDataSource(suggestions) {
+  _prepareDataSource(suggestions: Array<TransformedSuggestion>) {
     const isSavedSearches = suggestions.some(s => s.name);
 
     if (isSavedSearches) {
@@ -66,7 +66,7 @@ export default class QueryAssistSuggestionsList extends Component<Props, State> 
   }
 
   _renderRow = (suggestion: TransformedSuggestion | SavedQuery) => {
-    const isSuggestion = suggestion.caret;
+    const isSuggestion = 'caret' in suggestion;
 
     return (
       <TouchableOpacity

@@ -7,8 +7,8 @@ import {handleRelativeUrl} from '../config/config';
 import log from '../log/log';
 
 import type Auth from '../auth/auth';
-import type {FieldValue} from '../../flow/CustomFields';
-import type {IssueOnList, IssueFull, IssueComment, IssueProject} from '../../flow/Issue';
+import type {FieldValue, IssueComment, IssueProject} from '../../flow/CustomFields';
+import type {IssueOnList, IssueFull} from '../../flow/Issue';
 import type {IssueActivity} from '../../flow/Activity';
 import issueActivityPageFields from './api__activities-issue-fields';
 
@@ -51,9 +51,9 @@ export default class IssueAPI extends ApiBase {
     return await this.makeAuthorizedRequest(`${this.youTrackIssueUrl}?${queryString}`, 'POST', {});
   }
 
-  async loadIssueDraft(draftId: string): IssueFull {
+  async loadIssueDraft(draftId: string): Promise<IssueFull> {
     const queryString = qs.stringify({fields: issueFields.singleIssue.toString()});
-    const issue = await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/admin/users/me/drafts/${draftId}?${queryString}`);
+    const issue = await this.makeAuthorizedRequest<IssueFull>(`${this.youTrackUrl}/api/admin/users/me/drafts/${draftId}?${queryString}`);
     issue.attachments = ApiHelper.convertRelativeUrls(issue.attachments, 'url', this.config.backendUrl);
     return issue;
   }
@@ -63,10 +63,10 @@ export default class IssueAPI extends ApiBase {
    * @param issue
    * @returns {Promise}
      */
-  async updateIssueDraft(issue: IssueFull): IssueFull {
+  async updateIssueDraft(issue: IssueFull): Promise<IssueFull> {
     const queryString = qs.stringify({fields: issueFields.singleIssue.toString()});
 
-    const updatedIssue = await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/admin/users/me/drafts/${issue.id || ''}?${queryString}`, 'POST', issue);
+    const updatedIssue = await this.makeAuthorizedRequest<IssueFull>(`${this.youTrackUrl}/api/admin/users/me/drafts/${issue.id || ''}?${queryString}`, 'POST', issue);
     updatedIssue.attachments = ApiHelper.convertRelativeUrls(issue.attachments, 'url', this.config.backendUrl);
     return updatedIssue;
   }
@@ -74,14 +74,14 @@ export default class IssueAPI extends ApiBase {
   async updateIssueDraftFieldValue(issueId: string, fieldId: string, value: FieldValue) {
     const queryString = qs.stringify({fields: 'id,ringId,value'});
     const body = {id: fieldId, value};
-    return await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/admin/users/me/drafts/${issueId}/fields/${fieldId}?${queryString}`, 'POST', body);
+    return await this.makeAuthorizedRequest<IssueFull>(`${this.youTrackUrl}/api/admin/users/me/drafts/${issueId}/fields/${fieldId}?${queryString}`, 'POST', body);
   }
 
-  async submitComment(issueId: string, comment: IssueComment) {
+  async submitComment(issueId: string, comment: IssueComment): Promise<IssueComment> {
     const queryString = qs.stringify({fields: issueFields.issueComment.toString()});
     const url = `${this.youTrackIssueUrl}/${issueId}/comments/${comment.id || ''}?${queryString}`;
 
-    const submittedComment = await this.makeAuthorizedRequest(url, 'POST', comment);
+    const submittedComment = await this.makeAuthorizedRequest<IssueComment>(url, 'POST', comment);
     if (submittedComment.author && submittedComment.author.avatarUrl) {
       submittedComment.author.avatarUrl = handleRelativeUrl(submittedComment.author.avatarUrl, this.config.backendUrl);
     }
@@ -89,11 +89,11 @@ export default class IssueAPI extends ApiBase {
     return submittedComment;
   }
 
-  async updateCommentDeleted(issueId: string, commentId: string, deleted: boolean) {
+  async updateCommentDeleted(issueId: string, commentId: string, deleted: boolean): Promise<IssueComment> {
     const queryString = qs.stringify({fields: issueFields.issueComment.toString()});
     const url = `${this.youTrackIssueUrl}/${issueId}/comments/${commentId}?${queryString}`;
 
-    const comment = await this.makeAuthorizedRequest(url, 'POST', {deleted});
+    const comment = await this.makeAuthorizedRequest<IssueComment>(url, 'POST', {deleted});
     comment.author.avatarUrl = handleRelativeUrl(comment.author.avatarUrl, this.config.backendUrl);
 
     return comment;
@@ -130,14 +130,14 @@ export default class IssueAPI extends ApiBase {
     });
   }
 
-  async updateIssueSummaryDescription(issue: IssueFull) {
+  async updateIssueSummaryDescription(issue: IssueFull): Promise<{id: string}> {
     const queryString = qs.stringify({fields: 'id,value'});
     const body = {summary: issue.summary, description: issue.description};
 
     return await this.makeAuthorizedRequest(`${this.youTrackIssueUrl}/${issue.id}?${queryString}`, 'POST', body);
   }
 
-  async updateIssueFieldValue(issueId: string, fieldId: string, value: FieldValue) {
+  async updateIssueFieldValue(issueId: string, fieldId: string, value: FieldValue): Promise<{id: string}> {
     const queryString = qs.stringify({fields: 'id,ringId,value'});
     const body = {id: fieldId, value};
     return await this.makeAuthorizedRequest(`${this.youTrackIssueUrl}/${issueId}/fields/${fieldId}?${queryString}`, 'POST', body);
@@ -149,15 +149,15 @@ export default class IssueAPI extends ApiBase {
     return await this.makeAuthorizedRequest(`${this.youTrackIssueUrl}/${issueId}/fields/${fieldId}?${queryString}`, 'POST', body);
   }
 
-  async updateIssueStarred(issueId: string, hasStar: boolean) {
+  async updateIssueStarred(issueId: string, hasStar: boolean): Promise<void> {
     return await this.makeAuthorizedRequest(`${this.youTrackIssueUrl}/${issueId}/watchers`, 'POST', {hasStar});
   }
 
-  async updateIssueVoted(issueId: string, hasVote: boolean) {
+  async updateIssueVoted(issueId: string, hasVote: boolean): Promise<void> {
     return await this.makeAuthorizedRequest(`${this.youTrackIssueUrl}/${issueId}/voters`, 'POST', {hasVote});
   }
 
-  async updateProject(issue: IssueOnList, project: IssueProject) {
+  async updateProject(issue: IssueOnList, project: IssueProject): Promise<void> {
     const body = {
       id: issue.id,
       project: project
@@ -198,7 +198,7 @@ export default class IssueAPI extends ApiBase {
     return response.activities;
   }
 
-  removeAttachment(issueId: string, attachmentID: string) {
+  removeAttachment(issueId: string, attachmentID: string): Promise<void> {
     return this.makeAuthorizedRequest(`${this.youTrackIssueUrl}/${issueId}/attachments/${attachmentID}`, 'DELETE', null, {parseJson: false});
   }
 }

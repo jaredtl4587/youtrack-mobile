@@ -54,11 +54,12 @@ export default function BoardRow(props: Props) {
 
       <View style={styles.rowHeader}>
 
-        {row.issue && <TouchableOpacity onPress={() => onTapIssue(row.issue)}>
-          <Text style={[styles.headerIssueId, isResolved && styles.resolvedIssueText]}>
-            {ApiHelper.getIssueId(row.issue)}
-          </Text>
-        </TouchableOpacity>}
+        {!!row.issue && (
+          <TouchableOpacity onPress={() => onTapIssue(((row.issue: any): IssueOnList))}>
+            <Text style={[styles.headerIssueId, isResolved && styles.resolvedIssueText]}>
+              {ApiHelper.getIssueId(row.issue)}
+            </Text>
+          </TouchableOpacity>)}
 
         <TouchableOpacity
           style={styles.collapseButton}

@@ -78,6 +78,7 @@ export default class IssuePermissions {
     if (this._isBlockedByTimeTracking(issue, field)) {
       return false;
     }
+    // $FlowFixMe
     if (field.projectCustomField.field.isPublic) {
       return this._canUpdatePublicField(issue);
     }

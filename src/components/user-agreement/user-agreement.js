@@ -8,7 +8,7 @@ import styles, {markdownStyles} from './user-agreement.styles';
 import getTopPadding from '../../components/header/header__top-padding';
 import {acceptUserAgreement, declineUserAgreement} from '../../actions/app-actions';
 
-import type EndUserAgreement from '../../flow/AppConfig';
+import type {EndUserAgreement} from '../../flow/AppConfig';
 
 type Props = {
   show: boolean,

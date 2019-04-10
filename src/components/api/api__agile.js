@@ -18,7 +18,7 @@ export default class AgileAPI extends ApiBase {
       $topSwimlanes: top,
       $skipSwimlanes: skip
     }, {encode: false});
-    const sprint = await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/agiles/${boardId}/sprints/${sprintId}?${queryString}`);
+    const sprint = await this.makeAuthorizedRequest<SprintFull>(`${this.youTrackUrl}/api/agiles/${boardId}/sprints/${sprintId}?${queryString}`);
     return ApiHelper.patchAllRelativeAvatarUrls(sprint, this.config.backendUrl);
   }
 
@@ -66,21 +66,21 @@ export default class AgileAPI extends ApiBase {
     const queryString = qs.stringify({
       fields: agileFields.boardOnList.toString()
     });
-    return await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/agiles?${queryString}`);
+    return await this.makeAuthorizedRequest<BoardOnList>(`${this.youTrackUrl}/api/agiles?${queryString}`);
   }
 
   async getAgileUserProfile(): Promise<AgileUserProfile> {
     const queryString = qs.stringify({
       fields: agileFields.agileUserProfile.toString()
     });
-    return await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/agileUserProfile?${queryString}`);
+    return await this.makeAuthorizedRequest<AgileUserProfile>(`${this.youTrackUrl}/api/agileUserProfile?${queryString}`);
   }
 
   async updateAgileUserProfile(sprintId: string): Promise<AgileUserProfile> {
     const queryString = qs.stringify({
       fields: agileFields.agileUserProfile.toString()
     });
-    return await this.makeAuthorizedRequest(`${this.youTrackUrl}/api/agileUserProfile?${queryString}`, 'POST', {
+    return await this.makeAuthorizedRequest<AgileUserProfile>(`${this.youTrackUrl}/api/agileUserProfile?${queryString}`, 'POST', {
       visitedSprints: [{id: sprintId}]
     });
   }

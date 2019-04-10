@@ -1,3 +1,7 @@
+/* @flow */
+/* eslint-disable no-unused-vars */
+import type {IssueProject, IssueComment, IssueUser} from './CustomFields';
+
 type EventBase = {
   id: string,
   name: string,
@@ -28,14 +32,14 @@ type ActivityWorkItem = EventBase & {
   duration: {minutes: number}
 }
 
-export type AddedActivityItem = IssueProject | IssueComment | ActivityAttachment | ActivityIssue | ActivityWorkItem;
+export type AddedActivityItem = IssueProject | IssueComment | ActivityIssue | Object;
 export type RemovedActivityItem = IssueProject | IssueComment | ActivityIssue;
 
 export type IssueActivity = {
   id: string;
   category: {id: string},
   timestamp: number,
-  targetMember: Object,
+  targetMember: any,
   targetSubMember: Object,
   authorGroup: {
     icon: string,

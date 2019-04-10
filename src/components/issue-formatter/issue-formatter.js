@@ -1,6 +1,6 @@
 /* @flow */
 import fromNow from 'from-now';
-import type {IssueUser, CustomField} from '../../flow/CustomFields';
+import type {IssueUser, CustomFieldShort, CustomColorField} from '../../flow/CustomFields';
 import type {AnyIssue} from '../../flow/Issue';
 
 const shortRelativeFormat = {
@@ -65,8 +65,8 @@ function shortRelativeDate(date: Date|number) {
   return `${formatted}${getPostfix(formatted)}`;
 }
 
-function findIssueField(issue: AnyIssue, predicate: (field: CustomField) => boolean): ?CustomField {
-  const fields: Array<CustomField> = issue.fields;
+function findIssueField(issue: AnyIssue, predicate: (field: CustomFieldShort) => boolean): ?CustomFieldShort {
+  const fields: Array<CustomFieldShort> = ((issue.fields: any): Array<CustomFieldShort>);
 
   for (const field of fields) {
     if (predicate(field)) {
@@ -77,14 +77,15 @@ function findIssueField(issue: AnyIssue, predicate: (field: CustomField) => bool
   return null;
 }
 
-function getPriotityField(issue: AnyIssue): ?CustomField {
-  return findIssueField(issue, field => {
+function getPriotityField(issue: AnyIssue): ?CustomColorField {
+  const field = findIssueField(issue, field => {
     const fieldName = field.projectCustomField.field.name;
     return fieldName.toLowerCase() === 'priority';
   });
+  return field ? ((field: any): CustomColorField) : null;
 }
 
-function getAssigneeField(issue: AnyIssue): ?CustomField {
+function getAssigneeField(issue: AnyIssue): ?CustomFieldShort {
   const PRIORITY_FIELDS = ['Assignee', 'Assignees'];
   return findIssueField(issue, field => {
     const fieldName = field.projectCustomField.field.name;
@@ -93,12 +94,15 @@ function getAssigneeField(issue: AnyIssue): ?CustomField {
 }
 
 function getReadableID(issue: AnyIssue) {
-  return `${issue.idReadable || issue.id}`;
+  return issue.idReadable || issue.id;
 }
 
-function getEntityPresentation(entity: Object) {
+function getEntityPresentation(entity: Object | number) {
   if (!entity) {
     return '';
+  }
+  if (typeof entity === 'number') {
+    return entity.toString();
   }
 
   return entity.fullName || entity.localizedName || entity.name || entity.login || entity.presentation || '';

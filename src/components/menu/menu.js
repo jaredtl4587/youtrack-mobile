@@ -26,7 +26,6 @@ import {
 import {getStorageState} from '../storage/storage';
 
 import type {StorageState} from '../storage/storage';
-import type {AppConfigFilled} from '../../flow/AppConfig';
 import type {AgileUserProfile} from '../../flow/Agile';
 import Feature from '../feature/feature';
 
@@ -150,10 +149,10 @@ export class Menu extends Component<Props, void> {
           onTouchStart={() => clicksToShowCounter(openDebugView, 'open debug view')}
         >
           {accounts.map((account, index) => {
-            const config: AppConfigFilled = account.config;
+            const backendUrl = account.config?.backendUrl || 'empty backend url';
             const user = account.currentUser;
             if (!user) {
-              throw new Error(`Account of ${config.backendUrl} has no currentUser`);
+              throw new Error(`Account of ${backendUrl} has no currentUser`);
             }
             const avatarUrl = user.profile && user.profile.avatar && user.profile.avatar.url || '';
 
@@ -163,7 +162,7 @@ export class Menu extends Component<Props, void> {
                   <Avatar size={64} userName={user.name} source={{uri: avatarUrl}}/>
                 </TouchableWithoutFeedback>
 
-                <Text style={styles.serverURL} numberOfLines={1}>{formatYouTrackURL(config.backendUrl)}</Text>
+                <Text style={styles.serverURL} numberOfLines={1}>{formatYouTrackURL(backendUrl)}</Text>
                 <Text style={styles.profileName}>{user.name}</Text>
               </View>
             );

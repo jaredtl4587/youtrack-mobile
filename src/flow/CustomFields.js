@@ -1,3 +1,6 @@
+/* @flow */
+import type {IssueOnList} from './Issue';
+
 export type IssueUser = {
   $type: string,
   login: string,
@@ -72,6 +75,7 @@ export type ProjectCustomField = {
     isUpdateable: boolean
   },
   field: {
+    isPublic: boolean,
     id: string,
     name: string,
     ordinal: number,
@@ -115,20 +119,25 @@ export type FieldValueShort = {
   color: ColorField
 }
 
-export type CustomField = {
-  $type: string,
-  id: string,
-  name: string,
-  hasStateMachine: boolean,
-  value: FieldValue|number,
-  projectCustomField: ProjectCustomField
-}
-
 export type CustomFieldShort = {
   id: string,
   name: string,
   value: FieldValueShort | number,
   projectCustomField: ProjectCustomFieldShort
+}
+
+export type CustomField = {
+  id: string,
+  name: string,
+  value: FieldValueShort | number,
+  $type: string,
+  hasStateMachine: boolean,
+  value: FieldValue | number,
+  projectCustomField: ProjectCustomField
+}
+
+export type CustomColorField = CustomFieldShort & {
+  value: FieldValueShort
 }
 
 export type Attachment = {
@@ -162,7 +171,7 @@ export type IssueLinkType = {
 export type IssueLink = {
   $type: string,
   id: string,
-  direction: 'string',
+  direction: 'OUTWARD' | 'BOTH',
   linkType: IssueLinkType,
   trimmedIssues: Array<IssueOnList>
 }

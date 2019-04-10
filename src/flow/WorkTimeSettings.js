@@ -1,3 +1,4 @@
+/* @flow */
 export type WorkTimeSettings = {
   id: string,
   daysAWeek: number,

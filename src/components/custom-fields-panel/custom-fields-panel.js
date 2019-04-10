@@ -40,7 +40,7 @@ type State = {
     onChangeSelection?: (selectedItems: Array<Object>) => any,
     multi: boolean,
     emptyValue?: ?string,
-    selectedItems: Array<Object>,
+    selectedItems: Array<Object> | Object,
     placeholder?: string,
     getValue?: (item: Object) => string,
     getTitle?: (item: Object) => string
@@ -176,14 +176,15 @@ export default class CustomFieldsPanel extends Component<Props, State> {
   }
 
   editDateField(field: CustomFieldType) {
+    const value: number = ((field.value: any): number);
     const withTime = field.projectCustomField.field.fieldType.valueType === DATE_AND_TIME;
     return this.setState({
       datePicker: {
         show: true,
         withTime,
-        time: field.value ? new Date(field.value).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : null,
+        time: value ? new Date(value).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : null,
         title: field.projectCustomField.field.name,
-        value: field.value ? new Date(field.value) : new Date(),
+        value: value ? new Date(value) : new Date(),
         emptyValueName: field.projectCustomField.canBeEmpty ? field.projectCustomField.emptyFieldText : null,
         onSelect: (date) => {
           if (!date) {

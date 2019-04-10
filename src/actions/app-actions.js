@@ -207,7 +207,7 @@ export function changeAccount(account: StorageState, dropCurrentAccount: boolean
   return async (dispatch: (any) => any, getState: () => RootState) => {
     log.info('Changing account', getState().currentUser, account.currentUser);
     const {config, authParams} = account;
-    if (!authParams) {
+    if (!authParams || !config) {
       throw new Error('Account doesn\'t have valid authorization, cannot switch onto it.');
     }
     const auth = new Auth(config);
@@ -464,7 +464,7 @@ export function getStoredConfigAndProceed() {
   };
 }
 
-function subscribeToPush(config: AppConfigFilled) {
+function subscribeToPush() {
   return async (dispatch: (any) => any, getState, getApi) => {
     const {isRegisteredForPush} = getStorageState();
     if (isRegisteredForPush) {

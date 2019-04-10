@@ -66,7 +66,7 @@ export default class IssueVisibility {
     }
   }
 
-  static getVisibilityPresentation(visibility: Visibility = {}) {
+  static getVisibilityPresentation(visibility: Visibility | {} = {}) {
     return [...(visibility.permittedGroups || []), ...(visibility.permittedUsers || [])]
       .map(it => getEntityPresentation(it))
       .join(', ');
