@@ -303,21 +303,26 @@ class SingeIssueView extends Component<SingleIssueProps, void> {
     );
   }
 
+  _getUserAppearanceProfile(): UserAppearanceProfile | { naturalCommentsOrder: boolean } {
+    const DEFAULT_USER_APPEARANCE_PROFILE = {naturalCommentsOrder: true};
+    const {user} = this.props;
+    return user?.profiles?.appearance || DEFAULT_USER_APPEARANCE_PROFILE;
+  }
+
   _renderActivities() {
     const {
       activityPage,
       issue,
       copyCommentUrl, openNestedIssueView, issuePermissions,
       startEditingComment, deleteComment, restoreComment, deleteCommentPermanently,
-      workTimeSettings,
-      user
+      workTimeSettings
     } = this.props;
 
     return (
       <View style={styles.commentsListContainer}>
         <SingleIssueActivities
           activityPage={activityPage}
-          naturalCommentsOrder={user?.profiles?.appearance?.naturalCommentsOrder}
+          naturalCommentsOrder={this._getUserAppearanceProfile().naturalCommentsOrder}
 
           issueFields={issue.fields}
           attachments={issue.attachments}
@@ -387,7 +392,7 @@ class SingeIssueView extends Component<SingleIssueProps, void> {
   }
 
   _renderCustomFieldPanel() {
-    const {issue, issuePermissions, updateIssueFieldValue, updateProject } = this.props;
+    const {issue, issuePermissions, updateIssueFieldValue, updateProject} = this.props;
 
     return <CustomFieldsPanel
       api={getApi()}
@@ -438,7 +443,6 @@ class SingeIssueView extends Component<SingleIssueProps, void> {
       issueActivityTypes,
       issueActivityEnabledTypes,
       loadIssueActivities,
-      user,
       updateUserAppearanceProfile
     } = this.props;
 
@@ -493,7 +497,7 @@ class SingeIssueView extends Component<SingleIssueProps, void> {
               }
               loadIssueActivities(); //TODO(xi-eye:performance): do not reload activityPage if only `naturalCommentsOrder` has changed, just reverse the model
             }}
-            userAppearanceProfile={user.profiles.appearance}
+            userAppearanceProfile={this._getUserAppearanceProfile()}
           />}
 
           {Platform.OS === 'ios' && <KeyboardSpacer/>}
